@@ -1,0 +1,37 @@
+Structure
+- testris-clone
+    - public
+    - src code
+
+Components
+    - Board
+        - Rows
+        - Block
+
+    - Next Piece
+    - Pieces
+        1. Square
+        2. Line
+        3. Left L
+        4. Right L
+        5. Left Z
+        6. Right Z
+        7. T shape
+    - Score
+Game Logic
+    - Timer (in game clock - 60 fps)
+    - Randomize the next piece
+    - Rotations
+    - Translations (left, right, and down)
+    - Increase score on piece landing
+    - Increase score when row is cleared
+
+
+Board
+
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 1 0 0 0 0 0
+0 0 0 1 1 1 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
