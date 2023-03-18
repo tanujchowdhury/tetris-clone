@@ -1,3 +1,0 @@
-# tetris-clone
-
-Hi

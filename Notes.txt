@@ -35,3 +35,32 @@ Board
 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0
+
+Tanuj's questions:
+Two approaches:
+    1. Canvas 
+        1 div for the board, shapes will go inside Canvas
+    2. Each block is a div
+        capturing state of each black (ie filled or unfilled)
+    3. HTML Table
+    4. HTML Grid
+
+    HTML Table
+
+Rotations:
+    Rotation = Transpose + Reflect
+    T-shape
+
+        0 1 0    
+        1 1 1
+        0 0 0   
+
+    Line
+
+        0 1 0 0  
+        0 1 0 0          
+        0 1 0 0
+        0 1 0 0
+
+
+

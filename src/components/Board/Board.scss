@@ -1,0 +1,28 @@
+.board-container {
+    border: solid blue 1px;
+    position: absolute;
+    top: 50%;
+    height: 600px;
+    width: 300px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+}
+
+table, td, tr {
+    color: white;
+    border: solid white 1px;
+    height: 25px;
+    width: 300px;
+}
+
+#cell-2 {
+    background-color: green;
+}
+
+#cell-6, #cell-7, #cell-8 {
+    background-color: green;
+}
