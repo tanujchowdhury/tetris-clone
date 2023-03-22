@@ -4,8 +4,9 @@ import Cell from "../Cell/Cell";
 
 const Board = () => {
   const [BoardCellState, setBoardCellState] = useState({});
+  const [CurrentShape, setCurrentShape] = useState({ 4: "green", 5: "green", 14: "green", 15: "green" });
 
-  console.log(BoardCellState)  
+  // console.log(1)  
 
   const updateBoardState = (newState) => {
     setBoardCellState({ ...BoardCellState, ...newState });
@@ -20,9 +21,24 @@ const Board = () => {
     } 
     return updateBoardState(cells);
   }
-  const dropShape = () => {
-    updateBoardState({ 0: "green", 1: "green", 10: "green", 11: "green" });    
+
+  const renderShape = () => {
+
   }
+  // console.log(CurrentShape)
+  
+  // current shape =  [4: "green", 5: "green", 14: "green", 15: "green"]
+  const dropShape = () => {
+    const updatedShape = {};
+    for (let i in Object.keys(CurrentShape)) {
+      // console.log(Object.keys(CurrentShape)[i])
+      updatedShape[(Number(Object.keys(CurrentShape)[i]) + 10)] = "green";
+    }
+    setCurrentShape(updatedShape)
+    updateBoardState(CurrentShape);
+    console.log(updatedShape)
+  }
+
   
   useEffect(() => {
     createBoard(200, "blue");   
@@ -33,7 +49,9 @@ const Board = () => {
     return () => {
       clearInterval(myInterval);
     }
-  });
+  }, [dropShape]);
+
+  
 
   return (
     <div>
