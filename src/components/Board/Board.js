@@ -3,57 +3,100 @@ import "./Board.scss";
 import Cell from "../Cell/Cell";
 
 const Board = () => {
-  const [BoardCellState, setBoardCellState] = useState({});
-  const [Shape, setShape] = useState({
-    4: "green",
-    5: "green",
-    14: "green",
-    15: "green",
+  const [BoardState, setBoardState] = useState({
+    boardType: "simple",
+    cells: [],
   });
 
-  const updateBoardState = (newState) => {
-    setBoardCellState({ ...BoardCellState, ...newState });
+  const [Shape, setShape] = useState({
+    shapeType: "O", //O, T, I, J, L ..
+    shapeCells: [4, 5, 14, 15],
+    shapeColor: "green",
+    shapeOrientation: 0, //0, 90, 180, 270
+  });
+  //   {
+  //   4: {
+  //     cellKey: 4,
+  //     cellColor: "green",
+  //   },
+  //   5: {
+  //     shapeKey: 5,
+  //     shapeColor: "green",
+  //   },
+  //   14: {
+  //     shapeKey: 14,
+  //     shapeColor: "green",
+  //   },
+  //   15: {
+  //     shapeKey: 15,
+  //     shapeColor: "green",
+  //   },
+  // }
+
+  const updateBoardState = (currentShape) => {
+    const ColoredCells = currentShape["shapeCells"]?.map((currentCell) => {
+      return {[currentCell]: currentShape.shapeColor};
+    })
+    
+    console.log(ColoredCells)    
+    setBoardState({ ...BoardState, ...ColoredCells });
   };
 
-  const createBoard = (numberOfCells, cellColor) => {
+  const inflateBoardCells = (numberOfCells, cellColor) => {
     const cells = {};
     let i = 0;
     while (i < numberOfCells) {
-      cells[i] = cellColor;
+      cells[i] = {
+        cellIndex: i,
+        cellColor: cellColor,
+        isFilled: false,
+      };
       i++;
     }
-    return updateBoardState(cells);
+    // return updateBoardState(cells);
+   
+    return updateBoardState({
+      cells: cells,
+    });
   };
 
   const renderShape = (newShape) => {
     setShape(newShape);
   };
-
+  
   const dropShape = () => {
-    const updatedShape = {};
-    for (let i in Object.keys(Shape)) {
-      updatedShape[Number(Object.keys(Shape)[i]) + 10] = "green";
-    }
 
+    
+    // const updatedShape = {};
+    // for (let i in Object.values(Shape)) {
+    //   updatedShape[(Object.values(Shape)[i]).shapeKey + 10] = {
+    //     ...Shape,
+    //     shapeKey: Object.values(Shape)[i].shapeKey + 10,
+    //     shapeColor: "green",
+    //   }
+    // }
     //turn the old shape blue
-    const oldShape = {};
-    for (let i in Object.keys(Shape)) {
-      oldShape[Number(Object.keys(Shape)[i])] = "blue";
-    }
-
-    isCollidedShape();
-
-    setShape(updatedShape);
-    updateBoardState({ ...oldShape, ...updatedShape });
+    // const oldShape = {};
+    // for (let i in Object.keys(Shape)) {
+    //   oldShape[Number(Object.keys(Shape)[i])] = "blue";
+    // }
+    // isCollidedShape();
+    // setShape(updatedShape);
+    //...oldShape,
+    // updateBoardState({  ...updatedShape });
+    
+    
+    // updateBoardState({}
+    //   cellIndex: i,
+    //   cellColor: cellColor,
+    //   isFilled: false,)    
   };
-
-  console.log(BoardCellState);
 
   const isCollidedShape = () => {
     //collisions occur if 1)shape reaches end of board 2) shape reaches merged shape
-    const shapeIndices = Object.keys(Shape).map((shapeIndex) => {
-      return Number(shapeIndex);
-    });
+    // const shapeIndices = Object.keys(Shape).map((shapeIndex) => {
+    //   return Number(shapeIndex);
+    // });
 
     // const shapeLowestPoint = Math.max(...shapeIndices);
   };
@@ -61,11 +104,12 @@ const Board = () => {
   const mergeShape = () => {};
 
   useEffect(() => {
-    createBoard(200, "blue");
+    inflateBoardCells(200, "blue");
   }, []);
 
   useEffect(() => {
-    renderShape({ 4: "green", 5: "green", 14: "green", 15: "green" });
+    // renderShape();
+    updateBoardState(Shape);
   }, []);
 
   useEffect(() => {
@@ -76,25 +120,10 @@ const Board = () => {
   });
 
   return (
-    <div>
-      <button
-        onClick={() => {
-          updateBoardState({
-            ...BoardCellState,
-            0: "green",
-            1: "green",
-            10: "green",
-            11: "green",
-          });
-        }}
-      >
-        Update the state
-      </button>
-      <div className="board-container">
-        {Object.keys(BoardCellState)?.map((cell_key) => {
-          return <Cell key={cell_key} data={BoardCellState[cell_key]} />;
-        })}
-      </div>
+    <div className="board-container">
+      {BoardState.cells.forEach((cellIndex) => {
+        return <Cell key={cellIndex} data={BoardState[cellIndex]} />;
+      })}
     </div>
   );
 };
