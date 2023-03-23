@@ -22,6 +22,11 @@ const Board = () => {
   const [BoardState, setBoardState] = useState({
     boardType: "simple",
     cells: boardCells,
+    /*
+      cellIndex: i,
+      cellColor: cellColor,
+      isFilled: false,
+     */
   });
 
   const [Shape, setShape] = useState({
@@ -32,7 +37,6 @@ const Board = () => {
   });
 
   const passShapeToBoard = (render) => {
-    // console.log(render ? "add shape to board" : "remove shape from board");
     const cellColorMap = {};
     Shape.shapeCells.map((shapeCellIndex) => {
       cellColorMap[shapeCellIndex] = {
@@ -47,67 +51,61 @@ const Board = () => {
     });
   };
 
-  const renderShape = (newShape) => {
-    setShape(newShape);
-  };
-
   const dropShape = () => {
     passShapeToBoard(false);
-    const droppedCells = []
+    if (hasShapeCollided()) return;
+    const droppedCells = [];
     Shape.shapeCells.forEach((droppedCell) => {
-      droppedCells.push(droppedCell + 10)
-    })
-    console.log(droppedCells)
+      droppedCells.push(droppedCell + 10);
+    });
     setShape({
       ...Shape,
       shapeCells: droppedCells,
-    })
-    passShapeToBoard(true);
-
-    // const updatedShape = {};
-    // for (let i in Object.values(Shape)) {
-    //   updatedShape[Object.values(Shape)[i].shapeKey + 10] = {
-    //     ...Shape,
-    //     shapeKey: Object.values(Shape)[i].shapeKey + 10,
-    //     shapeColor: "green",
-    //   };
-    // }
-    // //turn the old shape blue
-    // const oldShape = {};
-    // for (let i in Object.keys(Shape)) {
-    //   oldShape[Number(Object.keys(Shape)[i])] = "blue";
-    // }
-    // isCollidedShape();
-    // setShape(updatedShape);
-    // // ...oldShape,
-    // // updateBoardState({ ...updatedShape });
+    });
   };
 
-  const isCollidedShape = () => {
-    //collisions occur if 1)shape reaches end of board 2) shape reaches merged shape
-    // const shapeIndices = Object.keys(Shape).map((shapeIndex) => {
-    //   return Number(shapeIndex);
-    // });
-    // const shapeLowestPoint = Math.max(...shapeIndices);
+  const hasShapeCollided = () => {
+    if (Math.max(...Shape.shapeCells) + 10 > 199) {
+      mergeShapeWithBoard();
+      return true;
+    };
+    for (let cellIndex in Shape.shapeCells) {
+      if (BoardState.cells[Shape.shapeCells[cellIndex] + 10].isFilled) {
+        mergeShapeWithBoard();
+        return true;
+      };
+    };
   };
 
-  const mergeShape = () => {};
+  const mergeShapeWithBoard = () => {
+    const cellsToMerge = {};
+    Shape.shapeCells.forEach((cellIndex) => {
+      cellsToMerge[cellIndex] = {
+        cellIndex: cellIndex,
+        cellColor: "yellow",
+        isFilled: true,
+      };
+    });
+    setBoardState({
+      ...BoardState,
+      cells: { ...BoardState.cells, ...cellsToMerge },
+    });
+    setShape({
+      ...Shape,
+      shapeCells: [4, 5, 14, 15],
+    });
+  };
 
   useEffect(() => {
-    passShapeToBoard(true);
-  }, []);
-
-  // useEffect(() => {
-  // renderShape();
-  // updateBoardState(Shape);
-  // }, []);
-
-  useEffect(() => {
-    const myInterval = setInterval(dropShape, 1500);
+    const myInterval = setInterval(dropShape, 100);
     return () => {
       clearInterval(myInterval);
     };
   });
+
+  useEffect(() => {
+    passShapeToBoard(true);
+  }, [Shape]);
 
   return (
     <>
