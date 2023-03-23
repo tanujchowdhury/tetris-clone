@@ -5,8 +5,10 @@ import Cell from "../Cell/Cell";
 const Board = () => {
   const [BoardState, setBoardState] = useState({
     boardType: "simple",
-    cells: [],
+    cells: {},
   });
+
+  console.log(BoardState)
 
   const [Shape, setShape] = useState({
     shapeType: "O", //O, T, I, J, L ..
@@ -14,36 +16,27 @@ const Board = () => {
     shapeColor: "green",
     shapeOrientation: 0, //0, 90, 180, 270
   });
-  //   {
-    
-  //   4: {
-  //     cellKey: 4,
-  //     cellColor: "green",
-  //   },
-  //   5: {
-  //     shapeKey: 5,
-  //     shapeColor: "green",
-  //   },
-  //   14: {
-  //     shapeKey: 14,
-  //     shapeColor: "green",
-  //   },
-  //   15: {
-  //     shapeKey: 15,
-  //     shapeColor: "green",
-  //   },
-  // }
 
-  const updateBoardState = (currentShape) => {
-    const ColoredCells = currentShape["shapeCells"]?.map((currentCell) => {
-      return {[currentCell]: currentShape.shapeColor};
+  // const updateBoardState = (newBoardState) => {
+  //   setBoardState({ ...BoardState, ...newBoardState });
+  // };
+
+  const passShapeToBoard = () => {
+    console.log("passShapeToBoard")
+    const cellColorMap = {}
+    Shape.shapeCells.map((shapeCellIndex) => {
+      cellColorMap[shapeCellIndex] = {
+        cellIndex: shapeCellIndex,
+        cellColor: Shape.shapeColor,
+        isFilled: false,
+      }
     })
-    
-    console.log(ColoredCells)    
-    setBoardState({ ...BoardState, ...ColoredCells });
-  };
+   setBoardState({...BoardState, cells: {...BoardState.cells, ...cellColorMap} })
+
+  }
 
   const inflateBoardCells = (numberOfCells, cellColor) => {
+    console.log("inflateBoardCells")
     const cells = {};
     let i = 0;
     while (i < numberOfCells) {
@@ -54,11 +47,10 @@ const Board = () => {
       };
       i++;
     }
-    // return updateBoardState(cells);
-   
-    return updateBoardState({
-      cells: cells,
-    });
+    return setBoardState({...BoardState, cells: cells})
+    // return updateBoardState({
+    //   cells: cells,
+    // });
   };
 
   const renderShape = (newShape) => {
@@ -104,14 +96,17 @@ const Board = () => {
 
   const mergeShape = () => {};
 
-  useEffect(() => {
-    inflateBoardCells(200, "blue");
-  }, []);
 
-  useEffect(() => {
-    // renderShape();
-    updateBoardState(Shape);
-  }, []);
+
+  // useEffect(() => {
+  //   inflateBoardCells(200, "blue");
+  // }, []);
+
+  // useEffect(() => {
+  //   passShapeToBoard()
+  //   // renderShape();
+  //   // updateBoardState(Shape);
+  // }, []);
 
   useEffect(() => {
     const myInterval = setInterval(dropShape, 1500);
@@ -121,11 +116,15 @@ const Board = () => {
   });
 
   return (
+    <>
     <div className="board-container">
-      {BoardState.cells.forEach((cellIndex) => {
-        return <Cell key={cellIndex} data={BoardState[cellIndex]} />;
+      {Object.values(BoardState.cells).map((cell) => {
+        return <Cell key={cell?.cellIndex} data={cell} />;
       })}
     </div>
+    <button onClick={() => inflateBoardCells(200, "blue")}>Inflate Board</button>
+    <button onClick={passShapeToBoard}>Pass Shape to Board</button>
+    </>
   );
 };
 
