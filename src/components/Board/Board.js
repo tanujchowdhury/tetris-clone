@@ -35,6 +35,7 @@ const Board = () => {
 
   }
 
+  // move this function to app.js and pass in cells prop to board component
   const inflateBoardCells = (numberOfCells, cellColor) => {
     console.log("inflateBoardCells")
     const cells = {};
