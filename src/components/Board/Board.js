@@ -15,6 +15,7 @@ const Board = () => {
     shapeOrientation: 0, //0, 90, 180, 270
   });
   //   {
+    
   //   4: {
   //     cellKey: 4,
   //     cellColor: "green",
