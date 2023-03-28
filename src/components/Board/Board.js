@@ -118,6 +118,7 @@ const Board = () => {
   console.log(Shape)
 
   const moveShapeRight = () => {
+    console.log('move shape right function')
     passShapeToBoard(false);
     if (hasShapeCollided()) return;
     const shiftedCells = [];
@@ -131,6 +132,7 @@ const Board = () => {
   };
 
   const moveShapeDown = () => {
+    console.log('move shape down function')
     dropShape();
   };
 
@@ -164,12 +166,12 @@ const Board = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const myInterval = setInterval(dropShape, 1000);
-  //   return () => {
-  //     clearInterval(myInterval);
-  //   };
-  // });
+  useEffect(() => {
+    const myInterval = setInterval(dropShape, 1000);
+    return () => {
+      clearInterval(myInterval);
+    };
+  });
 console.log(Shape)
   useEffect(() => {
     console.log('Shape use effect - about to passShapeToBoard')
@@ -178,6 +180,9 @@ console.log(Shape)
 
   useEffect(() => {
     window.addEventListener("keydown", onKeyDownHandler);
+    return () => {
+      window.removeEventListener("keydown", onKeyDownHandler);
+    }
   }, [Shape]);
 
   return (
