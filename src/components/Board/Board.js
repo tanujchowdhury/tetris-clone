@@ -103,8 +103,8 @@ const Board = () => {
 
   const moveShapeLeft = () => {
     console.log('move shape left function')
-    // passShapeToBoard(false);
-    // if (hasShapeCollided()) return;
+    passShapeToBoard(false);
+    if (hasShapeCollided()) return;
     const shiftedCells = [];
     Shape.shapeCells.forEach((shiftedCell) => {
       shiftedCells.push(shiftedCell - 1);
@@ -117,9 +117,22 @@ const Board = () => {
 
   console.log(Shape)
 
-  const moveShapeRight = () => {};
+  const moveShapeRight = () => {
+    passShapeToBoard(false);
+    if (hasShapeCollided()) return;
+    const shiftedCells = [];
+    Shape.shapeCells.forEach((shiftedCell) => {
+      shiftedCells.push(shiftedCell + 1);
+    });
+    setShape({
+      ...Shape,
+      shapeCells: shiftedCells,
+    });
+  };
 
-  const moveShapeDown = () => {};
+  const moveShapeDown = () => {
+    dropShape();
+  };
 
   const rotateShapeClockwise = () => {};
 
@@ -151,13 +164,13 @@ const Board = () => {
     }
   };
 
-  useEffect(() => {
-    const myInterval = setInterval(dropShape, 1000);
-    return () => {
-      clearInterval(myInterval);
-    };
-  });
-
+  // useEffect(() => {
+  //   const myInterval = setInterval(dropShape, 1000);
+  //   return () => {
+  //     clearInterval(myInterval);
+  //   };
+  // });
+console.log(Shape)
   useEffect(() => {
     console.log('Shape use effect - about to passShapeToBoard')
     passShapeToBoard(true);
@@ -165,7 +178,7 @@ const Board = () => {
 
   useEffect(() => {
     window.addEventListener("keydown", onKeyDownHandler);
-  }, []);
+  }, [Shape]);
 
   return (
     <>
