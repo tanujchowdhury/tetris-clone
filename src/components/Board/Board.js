@@ -37,14 +37,14 @@ const Board = () => {
   });
 
   const passShapeToBoard = (render) => {
-    console.log('pass shape function')
+    // console.log("pass shape function");
     const cellColorMap = {};
     Shape.shapeCells.map((shapeCellIndex) => {
-      return cellColorMap[shapeCellIndex] = {
+      return (cellColorMap[shapeCellIndex] = {
         cellIndex: shapeCellIndex,
         cellColor: render ? Shape.shapeColor : "blue",
         isFilled: false,
-      };
+      });
     });
     setBoardState({
       ...BoardState,
@@ -53,9 +53,9 @@ const Board = () => {
   };
 
   const dropShape = () => {
-    console.log('drop shape function')
+    // console.log("drop shape function");
     passShapeToBoard(false);
-    if (hasShapeCollided()) return;
+    if (hasShapeCollidedVertically()) return;
     const droppedCells = [];
     Shape.shapeCells.forEach((droppedCell) => {
       droppedCells.push(droppedCell + 10);
@@ -66,8 +66,26 @@ const Board = () => {
     });
   };
 
-  const hasShapeCollided = () => {
-    console.log('has shape collided function')
+  const hasShapeCollidedLeft = () => {
+    // console.log("has shape collided horizontally function");
+    for (let cellIndex in Shape.shapeCells) {
+      if (Shape.shapeCells[cellIndex] % 10 === 0) return true;
+      if (BoardState.cells[Shape.shapeCells[cellIndex] - 1].isFilled) return true;
+    }
+    return false;
+  };
+
+  const hasShapeCollidedRight = () => {
+    // console.log("has shape collided horizontally function");
+    for (let cellIndex in Shape.shapeCells) {
+      if (Shape.shapeCells[cellIndex] % 10 === 9) return true;
+      if (BoardState.cells[Shape.shapeCells[cellIndex] + 1].isFilled) return true;
+    }
+    return false;
+  };
+
+  const hasShapeCollidedVertically = () => {
+    // console.log("has shape collided vertically function");
     if (Math.max(...Shape.shapeCells) + 10 > 199) {
       mergeShapeWithBoard();
       return true;
@@ -82,7 +100,7 @@ const Board = () => {
   };
 
   const mergeShapeWithBoard = () => {
-    console.log('merge shape with board function')
+    // console.log("merge shape with board function");
     const cellsToMerge = {};
     Shape.shapeCells.forEach((cellIndex) => {
       cellsToMerge[cellIndex] = {
@@ -102,9 +120,9 @@ const Board = () => {
   };
 
   const moveShapeLeft = () => {
-    console.log('move shape left function')
+    // console.log("move shape left function");
+    if (hasShapeCollidedLeft()) return;
     passShapeToBoard(false);
-    if (hasShapeCollided()) return;
     const shiftedCells = [];
     Shape.shapeCells.forEach((shiftedCell) => {
       shiftedCells.push(shiftedCell - 1);
@@ -115,12 +133,10 @@ const Board = () => {
     });
   };
 
-  console.log(Shape)
-
   const moveShapeRight = () => {
-    console.log('move shape right function')
+    // console.log("move shape right function");
+    if (hasShapeCollidedRight()) return;
     passShapeToBoard(false);
-    if (hasShapeCollided()) return;
     const shiftedCells = [];
     Shape.shapeCells.forEach((shiftedCell) => {
       shiftedCells.push(shiftedCell + 1);
@@ -132,7 +148,7 @@ const Board = () => {
   };
 
   const moveShapeDown = () => {
-    console.log('move shape down function')
+    // console.log("move shape down function");
     dropShape();
   };
 
@@ -142,39 +158,39 @@ const Board = () => {
     // can add check for game state like started, going, ended, and remap keys accordingly
     switch (key.keyCode) {
       case 37:
-        console.log("Left Arrow");
+        // console.log("Left Arrow");
         moveShapeLeft();
         break;
       case 38:
-        console.log("Up Arrow");
+        // console.log("Up Arrow");
         rotateShapeClockwise();
         break;
       case 39:
-        console.log("Right Arrow");
+        // console.log("Right Arrow");
         moveShapeRight();
         break;
       case 40:
-        console.log("Down Arrow");
+        // console.log("Down Arrow");
         moveShapeDown();
         break;
       case 32:
-        console.log("Spacebar");
+        // console.log("Spacebar");
         rotateShapeClockwise();
         break;
       default:
-        console.log("Some key was pressed");
+        // console.log("Some key was pressed");
     }
   };
 
   useEffect(() => {
-    const myInterval = setInterval(dropShape, 1000);
+    const myInterval = setInterval(dropShape, 250);
     return () => {
       clearInterval(myInterval);
     };
   });
-console.log(Shape)
+  // console.log(Shape);
   useEffect(() => {
-    console.log('Shape use effect - about to passShapeToBoard')
+    // console.log("Shape use effect - about to passShapeToBoard");
     passShapeToBoard(true);
   }, [Shape]);
 
@@ -182,7 +198,7 @@ console.log(Shape)
     window.addEventListener("keydown", onKeyDownHandler);
     return () => {
       window.removeEventListener("keydown", onKeyDownHandler);
-    }
+    };
   }, [Shape]);
 
   return (
