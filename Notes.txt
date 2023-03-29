@@ -64,3 +64,15 @@ Rotations:
 
 
 
+Todo:
+shape maker
+clear lines when full
+Rotations
+score
+game over
+new game button
+
+
+Cool features:
+key rebinding
+
