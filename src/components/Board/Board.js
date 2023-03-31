@@ -37,7 +37,6 @@ const Board = () => {
   });
 
   const passShapeToBoard = (render) => {
-    // console.log("pass shape function");
     const cellColorMap = {};
     Shape.shapeCells.map((shapeCellIndex) => {
       return (cellColorMap[shapeCellIndex] = {
@@ -53,7 +52,6 @@ const Board = () => {
   };
 
   const dropShape = () => {
-    // console.log("drop shape function");
     passShapeToBoard(false);
     if (hasShapeCollidedVertically()) return;
     const droppedCells = [];
@@ -67,25 +65,24 @@ const Board = () => {
   };
 
   const hasShapeCollidedLeft = () => {
-    // console.log("has shape collided horizontally function");
     for (let cellIndex in Shape.shapeCells) {
       if (Shape.shapeCells[cellIndex] % 10 === 0) return true;
-      if (BoardState.cells[Shape.shapeCells[cellIndex] - 1].isFilled) return true;
+      if (BoardState.cells[Shape.shapeCells[cellIndex] - 1].isFilled)
+        return true;
     }
     return false;
   };
 
   const hasShapeCollidedRight = () => {
-    // console.log("has shape collided horizontally function");
     for (let cellIndex in Shape.shapeCells) {
       if (Shape.shapeCells[cellIndex] % 10 === 9) return true;
-      if (BoardState.cells[Shape.shapeCells[cellIndex] + 1].isFilled) return true;
+      if (BoardState.cells[Shape.shapeCells[cellIndex] + 1].isFilled)
+        return true;
     }
     return false;
   };
 
   const hasShapeCollidedVertically = () => {
-    // console.log("has shape collided vertically function");
     if (Math.max(...Shape.shapeCells) + 10 > 199) {
       mergeShapeWithBoard();
       return true;
@@ -100,7 +97,6 @@ const Board = () => {
   };
 
   const mergeShapeWithBoard = () => {
-    // console.log("merge shape with board function");
     const cellsToMerge = {};
     Shape.shapeCells.forEach((cellIndex) => {
       cellsToMerge[cellIndex] = {
@@ -120,7 +116,6 @@ const Board = () => {
   };
 
   const moveShapeLeft = () => {
-    // console.log("move shape left function");
     if (hasShapeCollidedLeft()) return;
     passShapeToBoard(false);
     const shiftedCells = [];
@@ -134,7 +129,6 @@ const Board = () => {
   };
 
   const moveShapeRight = () => {
-    // console.log("move shape right function");
     if (hasShapeCollidedRight()) return;
     passShapeToBoard(false);
     const shiftedCells = [];
@@ -148,7 +142,6 @@ const Board = () => {
   };
 
   const moveShapeDown = () => {
-    // console.log("move shape down function");
     dropShape();
   };
 
@@ -178,7 +171,7 @@ const Board = () => {
         rotateShapeClockwise();
         break;
       default:
-        // console.log("Some key was pressed");
+      // console.log("Some key was pressed");
     }
   };
 
@@ -188,9 +181,8 @@ const Board = () => {
       clearInterval(myInterval);
     };
   });
-  // console.log(Shape);
+
   useEffect(() => {
-    // console.log("Shape use effect - about to passShapeToBoard");
     passShapeToBoard(true);
   }, [Shape]);
 
