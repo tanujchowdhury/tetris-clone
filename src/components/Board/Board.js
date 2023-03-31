@@ -3,99 +3,204 @@ import "./Board.scss";
 import Cell from "../Cell/Cell";
 
 const Board = () => {
-  const [BoardCellState, setBoardCellState] = useState({});
-  const [Shape, setShape] = useState({
-    4: "green",
-    5: "green",
-    14: "green",
-    15: "green",
-  });
-
-  const updateBoardState = (newState) => {
-    setBoardCellState({ ...BoardCellState, ...newState });
-  };
-
-  const createBoard = (numberOfCells, cellColor) => {
+  const inflateBoardCells = (numberOfCells, cellColor) => {
     const cells = {};
     let i = 0;
     while (i < numberOfCells) {
-      cells[i] = cellColor;
+      cells[i] = {
+        cellIndex: i,
+        cellColor: cellColor,
+        isFilled: false,
+      };
       i++;
     }
-    return updateBoardState(cells);
+    return cells;
   };
 
-  const renderShape = (newShape) => {
-    setShape(newShape);
+  const boardCells = inflateBoardCells(200, "blue");
+
+  const [BoardState, setBoardState] = useState({
+    boardType: "simple",
+    cells: boardCells,
+    /*
+      cellIndex: i,
+      cellColor: cellColor,
+      isFilled: false,
+     */
+  });
+
+  const [Shape, setShape] = useState({
+    shapeType: "O", //O, T, I, J, L ..
+    shapeCells: [4, 5, 14, 15],
+    shapeColor: "green",
+    shapeOrientation: 0, //0, 90, 180, 270
+  });
+
+  const passShapeToBoard = (render) => {
+    const cellColorMap = {};
+    Shape.shapeCells.map((shapeCellIndex) => {
+      return (cellColorMap[shapeCellIndex] = {
+        cellIndex: shapeCellIndex,
+        cellColor: render ? Shape.shapeColor : "blue",
+        isFilled: false,
+      });
+    });
+    setBoardState({
+      ...BoardState,
+      cells: { ...BoardState.cells, ...cellColorMap },
+    });
   };
 
   const dropShape = () => {
-    const updatedShape = {};
-    for (let i in Object.keys(Shape)) {
-      updatedShape[Number(Object.keys(Shape)[i]) + 10] = "green";
-    }
-
-    //turn the old shape blue
-    const oldShape = {};
-    for (let i in Object.keys(Shape)) {
-      oldShape[Number(Object.keys(Shape)[i])] = "blue";
-    }
-
-    isCollidedShape();
-
-    setShape(updatedShape);
-    updateBoardState({ ...oldShape, ...updatedShape });
-  };
-
-  console.log(BoardCellState);
-
-  const isCollidedShape = () => {
-    //collisions occur if 1)shape reaches end of board 2) shape reaches merged shape
-    const shapeIndices = Object.keys(Shape).map((shapeIndex) => {
-      return Number(shapeIndex);
+    passShapeToBoard(false);
+    if (hasShapeCollidedVertically()) return;
+    const droppedCells = [];
+    Shape.shapeCells.forEach((droppedCell) => {
+      droppedCells.push(droppedCell + 10);
     });
-
-    // const shapeLowestPoint = Math.max(...shapeIndices);
+    setShape({
+      ...Shape,
+      shapeCells: droppedCells,
+    });
   };
 
-  const mergeShape = () => {};
+  const hasShapeCollidedLeft = () => {
+    for (let cellIndex in Shape.shapeCells) {
+      if (Shape.shapeCells[cellIndex] % 10 === 0) return true;
+      if (BoardState.cells[Shape.shapeCells[cellIndex] - 1].isFilled)
+        return true;
+    }
+    return false;
+  };
+
+  const hasShapeCollidedRight = () => {
+    for (let cellIndex in Shape.shapeCells) {
+      if (Shape.shapeCells[cellIndex] % 10 === 9) return true;
+      if (BoardState.cells[Shape.shapeCells[cellIndex] + 1].isFilled)
+        return true;
+    }
+    return false;
+  };
+
+  const hasShapeCollidedVertically = () => {
+    if (Math.max(...Shape.shapeCells) + 10 > 199) {
+      mergeShapeWithBoard();
+      return true;
+    }
+    for (let cellIndex in Shape.shapeCells) {
+      if (BoardState.cells[Shape.shapeCells[cellIndex] + 10].isFilled) {
+        mergeShapeWithBoard();
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const mergeShapeWithBoard = () => {
+    const cellsToMerge = {};
+    Shape.shapeCells.forEach((cellIndex) => {
+      cellsToMerge[cellIndex] = {
+        cellIndex: cellIndex,
+        cellColor: "yellow",
+        isFilled: true,
+      };
+    });
+    setBoardState({
+      ...BoardState,
+      cells: { ...BoardState.cells, ...cellsToMerge },
+    });
+    setShape({
+      ...Shape,
+      shapeCells: [4, 5, 14, 15],
+    });
+  };
+
+  const moveShapeLeft = () => {
+    if (hasShapeCollidedLeft()) return;
+    passShapeToBoard(false);
+    const shiftedCells = [];
+    Shape.shapeCells.forEach((shiftedCell) => {
+      shiftedCells.push(shiftedCell - 1);
+    });
+    setShape({
+      ...Shape,
+      shapeCells: shiftedCells,
+    });
+  };
+
+  const moveShapeRight = () => {
+    if (hasShapeCollidedRight()) return;
+    passShapeToBoard(false);
+    const shiftedCells = [];
+    Shape.shapeCells.forEach((shiftedCell) => {
+      shiftedCells.push(shiftedCell + 1);
+    });
+    setShape({
+      ...Shape,
+      shapeCells: shiftedCells,
+    });
+  };
+
+  const moveShapeDown = () => {
+    dropShape();
+  };
+
+  const rotateShapeClockwise = () => {};
+
+  const onKeyDownHandler = (key) => {
+    // can add check for game state like started, going, ended, and remap keys accordingly
+    switch (key.keyCode) {
+      case 37:
+        // console.log("Left Arrow");
+        moveShapeLeft();
+        break;
+      case 38:
+        // console.log("Up Arrow");
+        rotateShapeClockwise();
+        break;
+      case 39:
+        // console.log("Right Arrow");
+        moveShapeRight();
+        break;
+      case 40:
+        // console.log("Down Arrow");
+        moveShapeDown();
+        break;
+      case 32:
+        // console.log("Spacebar");
+        rotateShapeClockwise();
+        break;
+      default:
+      // console.log("Some key was pressed");
+    }
+  };
 
   useEffect(() => {
-    createBoard(200, "blue");
-  }, []);
-
-  useEffect(() => {
-    renderShape({ 4: "green", 5: "green", 14: "green", 15: "green" });
-  }, []);
-
-  useEffect(() => {
-    const myInterval = setInterval(dropShape, 1500);
+    const myInterval = setInterval(dropShape, 250);
     return () => {
       clearInterval(myInterval);
     };
   });
 
+  useEffect(() => {
+    passShapeToBoard(true);
+  }, [Shape]);
+
+  useEffect(() => {
+    window.addEventListener("keydown", onKeyDownHandler);
+    return () => {
+      window.removeEventListener("keydown", onKeyDownHandler);
+    };
+  }, [Shape]);
+
   return (
-    <div>
-      <button
-        onClick={() => {
-          updateBoardState({
-            ...BoardCellState,
-            0: "green",
-            1: "green",
-            10: "green",
-            11: "green",
-          });
-        }}
-      >
-        Update the state
-      </button>
+    <>
       <div className="board-container">
-        {Object.keys(BoardCellState)?.map((cell_key) => {
-          return <Cell key={cell_key} data={BoardCellState[cell_key]} />;
+        {Object.values(BoardState.cells).map((cell) => {
+          return <Cell key={cell?.cellIndex} data={cell} />;
         })}
       </div>
-    </div>
+    </>
   );
 };
 
